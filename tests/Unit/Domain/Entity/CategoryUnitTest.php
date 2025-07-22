@@ -2,6 +2,7 @@
 
 namespace Unit\Domain\Entity;
 
+use Cassandra\Uuid;
 use Core\Domain\Entity\Category;
 use PHPUnit\Framework\TestCase;
 
@@ -41,5 +42,25 @@ class CategoryUnitTest extends TestCase
         $this->assertTrue($category->isActive);
         $category->disable();
         $this->assertFalse($category->isActive);
+    }
+
+    public function testeUpdate()
+    {
+        $uuid = 'uuid.value';
+
+        $category = new Category(
+            id: $uuid,
+            name: 'New cat',
+            description: 'New desc',
+            isActive: true,
+        );
+
+        $category->update(
+            name: 'new_name',
+            description: 'new desc',
+        );
+
+        $this->assertEquals('new_name', $category->name);
+        $this->assertEquals('new desc', $category->description);
     }
 }
