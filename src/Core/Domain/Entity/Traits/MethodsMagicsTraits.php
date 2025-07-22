@@ -7,7 +7,7 @@ trait MethodsMagicsTraits
 {
     public function __get($property)
     {
-        if ($this->{$property})
+        if (isset($this->{$property}))
             return $this->{$property};
 
         $className = get_class($this);
