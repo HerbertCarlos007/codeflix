@@ -2,8 +2,8 @@
 
 namespace Unit\Domain\Entity;
 
-use Cassandra\Uuid;
 use Core\Domain\Entity\Category;
+use Core\Domain\Exception\EntityValidationException;
 use PHPUnit\Framework\TestCase;
 
 class CategoryUnitTest extends TestCase
@@ -62,5 +62,19 @@ class CategoryUnitTest extends TestCase
 
         $this->assertEquals('new_name', $category->name);
         $this->assertEquals('new desc', $category->description);
+    }
+
+    public function testExceptionName()
+    {
+        try {
+            $category = new Category(
+                name: 'Ne',
+                description: 'New desc',
+            );
+
+            $this->assertTrue(false);
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(EntityValidationException::class, $th);
+        }
     }
 }
