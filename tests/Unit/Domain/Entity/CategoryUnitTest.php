@@ -5,6 +5,7 @@ namespace Unit\Domain\Entity;
 use Core\Domain\Entity\Category;
 use Core\Domain\Exception\EntityValidationException;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
 class CategoryUnitTest extends TestCase
 {
@@ -16,6 +17,7 @@ class CategoryUnitTest extends TestCase
             isActive: true,
         );
 
+        $this->assertNotEmpty($category->id());
         $this->assertEquals('New cat', $category->name);
         $this->assertEquals('New desc', $category->description);
         $this->assertTrue($category->isActive);
@@ -46,7 +48,7 @@ class CategoryUnitTest extends TestCase
 
     public function testeUpdate()
     {
-        $uuid = 'uuid.value';
+        $uuid = (string) Uuid::uuid4()->toString();
 
         $category = new Category(
             id: $uuid,
@@ -60,6 +62,7 @@ class CategoryUnitTest extends TestCase
             description: 'new desc',
         );
 
+        $this->assertEquals($uuid, $category->id());
         $this->assertEquals('new_name', $category->name);
         $this->assertEquals('new desc', $category->description);
     }
@@ -67,9 +70,23 @@ class CategoryUnitTest extends TestCase
     public function testExceptionName()
     {
         try {
-            $category = new Category(
+            new Category(
                 name: 'N',
                 description: 'New desc',
+            );
+
+            $this->assertTrue(false);
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(EntityValidationException::class, $th);
+        }
+    }
+
+    public function testExceptionDescription()
+    {
+        try {
+            new Category(
+                name: 'Name Cat',
+                description: random_bytes(999999),
             );
 
             $this->assertTrue(false);
